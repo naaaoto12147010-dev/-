@@ -10,12 +10,12 @@ st.title("現場報告書 生成アプリ (テンプレート方式)")
 report_type = st.radio("作成する報告書を選択", ["作業報告書", "トラブル報告書"])
 
 # 入力項目
-manage_no = st.text_input("管理番号　例：E99-9999")
-client = st.text_input("顧客/担当者　例：株式会社○○○　※正式名称記載")
-equipment = st.text_input("設備名称　例：スタッカークレーン　1号機")
-date_val = st.date_input("作成日　※カレンダーより選択")
-work_title = st.text_input("内容　例：フォークタイムオーバー　調査")
-workers = st.text_input("作業者　※苗字のみ")
+manage_no = st.text_input("管理番号 例：E99-9999")
+client = st.text_input("顧客/担当者 例：株式会社○○○ ※正式名称記載")
+equipment = st.text_input("設備名称 例：スタッカークレーン 1号機")
+date_val = st.date_input("作成日 ※カレンダーより選択")
+work_title = st.text_input("内容 例：フォークタイムオーバー 調査")
+workers = st.text_input("作業者 ※苗字のみ")
 
 if report_type == "トラブル報告書":
     history = st.text_area("１．経緯")
@@ -24,12 +24,12 @@ if report_type == "トラブル報告書":
     result = st.text_area("４．調査結果")
     action = st.text_area("５．対応内容・処置内容")
     remarks = st.text_area("６．備考・まとめ")
-    img_t1 = st.file_uploader("状況写真1", type=["png", "jpg"])
-    img_t2 = st.file_uploader("状況写真2", type=["png", "jpg"])
+    img_t1 = st.file_uploader("状況写真1", type=["png", "jpg", "jpeg"])
+    img_t2 = st.file_uploader("状況写真2", type=["png", "jpg", "jpeg"])
 
 st.subheader("交換・処置写真")
-img_b = st.file_uploader("前（旧品）", type=["png", "jpg"])
-img_a = st.file_uploader("後（新品）", type=["png", "jpg"])
+img_b = st.file_uploader("前（旧品）", type=["png", "jpg", "jpeg"])
+img_a = st.file_uploader("後（新品）", type=["png", "jpg", "jpeg"])
 
 # 【重要】結合セル対応の転記関数
 def write_cell(ws, cell_name, value):
@@ -65,12 +65,12 @@ def edit_excel(template_name):
         write_cell(ws, "B47", action)
         write_cell(ws, "B56", remarks)
 
-    # 写真貼り付け
+    # 写真貼り付け関数
     def add_img(file, cell):
         if file:
             img = PILImage.open(file)
             img = ImageOps.exif_transpose(img)
-            img.thumbnail((200, 200))
+            img.thumbnail((250, 250))
             path = f"tmp_{cell}.png"
             img.save(path)
             xl_img = openpyxl.drawing.image.Image(path)
@@ -78,7 +78,18 @@ def edit_excel(template_name):
             return path
         return None
     
-    img_paths = [add_img(img_b, "B20"), add_img(img_a, "F20")]
+    # 報告書の種類に合わせて、写真を貼り付ける場所を変える
+    img_paths = []
+    if report_type == "トラブル報告書":
+        # ★必要に応じて、トラブル報告書の写真セル位置を修正してください★
+        img_paths.append(add_img(img_t1, "AM10")) # 状況写真1
+        img_paths.append(add_img(img_t2, "BD10")) # 状況写真2
+        img_paths.append(add_img(img_b, "AM28"))  # 交換前
+        img_paths.append(add_img(img_a, "BD28"))  # 交換後
+    else:
+        # 作業報告書の写真セル位置
+        img_paths.append(add_img(img_b, "B20"))
+        img_paths.append(add_img(img_a, "F20"))
     
     out = io.BytesIO()
     wb.save(out)
@@ -96,4 +107,3 @@ if st.button("Excelを作成"):
         st.download_button("📥 ダウンロード", out.getvalue(), f"{manage_no}_報告書.xlsx")
     else:
         st.error(f"ファイル {template} が見つかりません。")
-
