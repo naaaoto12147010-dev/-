@@ -61,7 +61,7 @@ def edit_excel(template_name):
         write_cell(ws, "B16", history)
         write_cell(ws, "B23", check_status)
         write_cell(ws, "B30", investigation)
-        write_cell(ws, "B45", result)
+        write_cell(ws, "B37", result)
         write_cell(ws, "B47", action)
         write_cell(ws, "B56", remarks)
 
