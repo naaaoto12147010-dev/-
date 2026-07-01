@@ -51,11 +51,11 @@ def edit_excel(template_name):
     
     # 書き込み (templateの実際のセル番地に合わせてください)
     write_cell(ws, "A2", manage_no)
-    write_cell(ws, "E3", str(date_val))
+    write_cell(ws, "E10", str(date_val))
     write_cell(ws, "E3", client)
     write_cell(ws, "C6", equipment)
-    write_cell(ws, "C8", work_title)
-    write_cell(ws, "G7", workers)
+    write_cell(ws, "E7", work_title)
+    write_cell(ws, "AA7", workers)
 
     if report_type == "トラブル報告書":
         write_cell(ws, "C15", history)
@@ -96,3 +96,4 @@ if st.button("Excelを作成"):
         st.download_button("📥 ダウンロード", out.getvalue(), f"{manage_no}_報告書.xlsx")
     else:
         st.error(f"ファイル {template} が見つかりません。")
+
