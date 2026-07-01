@@ -1,5 +1,6 @@
 import streamlit as st
 import openpyxl
+from openpyxl.styles import Alignment # ★改行を有効にするために追加
 from PIL import Image as PILImage, ImageOps
 import io
 import os
@@ -31,7 +32,7 @@ st.subheader("交換・処置写真")
 img_b = st.file_uploader("前（旧品）", type=["png", "jpg", "jpeg"])
 img_a = st.file_uploader("後（新品）", type=["png", "jpg", "jpeg"])
 
-# 【重要】結合セル対応の転記関数
+# 【重要】結合セル ＆ 改行対応の転記関数
 def write_cell(ws, cell_name, value):
     cell = ws[cell_name]
     # 結合セルなら左上のセルに書き込む
@@ -41,6 +42,14 @@ def write_cell(ws, cell_name, value):
                 cell = merged_range.start_cell
                 break
     cell.value = value
+    
+    # ★ここがポイント！入力された改行（エンターキー）をExcel側でも有効化する設定
+    current_alignment = cell.alignment if cell.alignment else Alignment()
+    cell.alignment = Alignment(
+        horizontal=current_alignment.horizontal,
+        vertical=current_alignment.vertical,
+        wrap_text=True # 折り返して全体を表示する（改行を有効化）
+    )
 
 def edit_excel(template_name):
     if not os.path.exists(template_name):
@@ -81,7 +90,6 @@ def edit_excel(template_name):
     # 報告書の種類に合わせて、写真を貼り付ける場所を変える
     img_paths = []
     if report_type == "トラブル報告書":
-        # ★必要に応じて、トラブル報告書の写真セル位置を修正してください★
         img_paths.append(add_img(img_t1, "AM10")) # 状況写真1
         img_paths.append(add_img(img_t2, "BD10")) # 状況写真2
         img_paths.append(add_img(img_b, "AM28"))  # 交換前
