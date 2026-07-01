@@ -58,12 +58,12 @@ def edit_excel(template_name):
     write_cell(ws, "AA7", workers)
 
     if report_type == "トラブル報告書":
-        write_cell(ws, "C15", history)
-        write_cell(ws, "C17", check_status)
-        write_cell(ws, "C19", investigation)
-        write_cell(ws, "C21", result)
-        write_cell(ws, "C23", action)
-        write_cell(ws, "C25", remarks)
+        write_cell(ws, "B16", history)
+        write_cell(ws, "B23", check_status)
+        write_cell(ws, "B30", investigation)
+        write_cell(ws, "", result)
+        write_cell(ws, "B47", action)
+        write_cell(ws, "B56", remarks)
 
     # 写真貼り付け
     def add_img(file, cell):
