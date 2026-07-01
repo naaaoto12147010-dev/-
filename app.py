@@ -53,7 +53,7 @@ def edit_excel(template_name):
     write_cell(ws, "A2", manage_no)
     write_cell(ws, "E10", str(date_val))
     write_cell(ws, "E3", client)
-    write_cell(ws, "C6", equipment)
+    write_cell(ws, "E5", equipment)
     write_cell(ws, "E7", work_title)
     write_cell(ws, "AA7", workers)
 
